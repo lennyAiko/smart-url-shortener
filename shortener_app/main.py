@@ -61,6 +61,7 @@ def forward_to_target_url(
     # := is like a short form of list comprehension, assignment expression, 
     # The := operator is colloquially known as the walrus operator and gives you a new syntax for assigning variables in the middle of expressions.
     if db_url := crud.get_db_url_by_key(db=db, url_key=url_key):
+        crud.update_db_clicks(db=db, db_url=db_url)
         return RedirectResponse(db_url.target_url)
     else:
         raise_not_found(request)
