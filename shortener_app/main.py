@@ -1,6 +1,7 @@
 # shortener_app/main.py
 
 import secrets
+import requests
 
 import validators
 from fastapi import FastAPI, HTTPException, Depends, Request
@@ -38,6 +39,13 @@ def get_admin_info(db_url:models.URL) -> schemas.URLInfo:
     db_url.admin_url = str(base_url.replace(path=admin_endpoint))
     return db_url
 
+def check_if_exist(site):
+    response = requests.get(site)
+    if response.status_code == 200:
+        return "true"
+    else:
+        return "false"
+
 @app.get("/")
 def read_root():
     return "Hi, welcome to the smart URL shortener API ;-)"
@@ -48,6 +56,10 @@ def create_url(url: schemas.URLBase, db: Session = Depends(get_db)):
     # pydantic makes sure it is a string that comes in while validator makes sure it is a valid URL
     if not validators.url(url.target_url):
         raise_bad_request(message="Your provided URL is not valid")
+    
+    response = check_if_exist(url.target_url)
+    if response == "false":
+        raise_bad_request(message="The website cannot be reached")
 
     db_url = crud.create_db_url(db=db, url=url)
     return get_admin_info(db_url)
