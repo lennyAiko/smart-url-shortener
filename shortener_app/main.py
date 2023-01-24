@@ -52,6 +52,15 @@ def create_url(url: schemas.URLBase, db: Session = Depends(get_db)):
     db_url = crud.create_db_url(db=db, url=url)
     return get_admin_info(db_url)
 
+@app.get("/{user_key}")
+def search_url(
+    user_key: str, request: Request, db: Session = Depends(get_db)
+):
+    if db_url := crud.get_target_url_by_key(db=db, url_key=user_key):
+        return db_url.target_url
+    else:
+        raise_not_found(request)
+
 @app.get("/{url_key}")
 def forward_to_target_url(
         url_key: str,

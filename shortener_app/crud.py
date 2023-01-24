@@ -47,3 +47,10 @@ def deactivate_db_url_by_secret_key(db: Session, secret_key: str) -> models.URL:
         db.commit()
         db.refresh(db_url)
     return db_url
+
+def get_target_url_by_key(db: Session, url_key: str) -> models.URL:
+    return(
+        db.query(models.URL)
+        .filter(models.URL.key == url_key, models.URL.is_active)
+        .first()
+    )
