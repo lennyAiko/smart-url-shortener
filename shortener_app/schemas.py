@@ -1,9 +1,11 @@
 # shortener_app/schemas.py
 
 from pydantic import BaseModel
+from typing import Optional
 
 class URLBase(BaseModel):
     target_url: str
+    custom_key: Optional[str]
 
 class URL(URLBase):
     is_active: bool

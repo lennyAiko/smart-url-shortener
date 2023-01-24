@@ -48,7 +48,7 @@ def create_url(url: schemas.URLBase, db: Session = Depends(get_db)):
     # pydantic makes sure it is a string that comes in while validator makes sure it is a valid URL
     if not validators.url(url.target_url):
         raise_bad_request(message="Your provided URL is not valid")
-    
+
     db_url = crud.create_db_url(db=db, url=url)
     return get_admin_info(db_url)
 
